@@ -321,7 +321,6 @@ vscode.commands.registerCommand('test.addCommentsToMethod', async (document, ran
 
 				const choice = choices[0];
 				progress.report({ increment: 60 });
-				console.log(choices)
 				const textToReplace = choice.message.content;
 
 				progress.report({ increment: 80 });
