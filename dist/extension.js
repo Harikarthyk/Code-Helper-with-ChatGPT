@@ -8017,7 +8017,9 @@ vscode.commands.registerCommand('test.addCommentsToMethod', async (document, ran
 			 * @return [RETURN]
 			 */
 
-			Add This type of comment to the method.
+			Add This type of comment before each method in the code.
+
+			NOTE: Add the description before the method.
 		`;
         const prompt = prefix + text;
         try {
@@ -8033,7 +8035,8 @@ vscode.commands.registerCommand('test.addCommentsToMethod', async (document, ran
                 progress.report({ increment: 0 });
                 const responseOptions = {
                     "model": "gpt-3.5-turbo",
-                    "messages": [{ "role": "user", "content": prompt }]
+                    "messages": [{ "role": "user", "content": prompt }],
+                    "temperature": 1
                 };
                 progress.report({ increment: 5 });
                 const response = await axios_1.default.post('https://api.openai.com/v1/chat/completions', responseOptions, {
@@ -8049,6 +8052,7 @@ vscode.commands.registerCommand('test.addCommentsToMethod', async (document, ran
                 const choices = responseJson.choices;
                 const choice = choices[0];
                 progress.report({ increment: 60 });
+                console.log(choices);
                 const textToReplace = choice.message.content;
                 progress.report({ increment: 80 });
                 // replace the range with the uppercase text in the active editor.
