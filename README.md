@@ -1,4 +1,4 @@
-# test README
+# Your AI Helper (chatGPT) README
 
 This is the README for your extension "test". After writing up a brief description, we recommend including the following sections.
 
