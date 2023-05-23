@@ -65,6 +65,20 @@
           "command": "test.getAnsForComment",
           "group": "AI Helper"
         }
+      ],
+      "scm/resourceFolder/context": [
+        {
+          "command": "test.helloWorld",
+          "group": "AI Helper",
+          "when": "resourceScheme == file"
+        }
+      ],
+      
+      "commandPalette": [
+        {
+          "command": "test.helloWorld",
+          "group": "AI Helper"
+        }
       ]
     }
   },

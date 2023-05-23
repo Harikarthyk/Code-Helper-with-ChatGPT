@@ -8019,7 +8019,8 @@ vscode.commands.registerCommand('test.addCommentsToMethod', async (document, ran
 
 			Add This type of comment before each method in the code.
 
-			NOTE: Add the description before the method.
+
+			NOTE: Add the comment before the method and share the modified code.
 		`;
         const prompt = prefix + text;
         try {
