@@ -301,35 +301,51 @@ vscode.commands.registerCommand('test.addCommentsToMethod', async (document, ran
 				const responseOptions: any = {
 					"model": "gpt-3.5-turbo",
 					"messages": [{ "role": "user", "content": prompt }],
-					"temperature": 1
+					"temperature": 1,
+					// "stop": ["\n"]
 				};
 
 				progress.report({ increment: 5 });
-				const response: any = await axios.post('https://api.openai.com/v1/chat/completions', responseOptions, {
-					headers: {
-						'Content-Type': 'application/json',
-						// eslint-disable-next-line @typescript-eslint/naming-convention
-						Authorization: 'Bearer ' + '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'
+				// do a do while loop, if the response.choices[0].finish_reason === "stop" then break the loop. or else and the response.choices[0].text to the prompt along wth the previous messages and send the request again.
+				let ans = "";
+				do {
+					const response: any = await axios.post('https://api.openai.com/v1/chat/completions', responseOptions, {
+						headers: {
+							'Content-Type': 'application/json',
+							// eslint-disable-next-line @typescript-eslint/naming-convention
+							Authorization: 'Bearer ' + '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'
+						}
+					});
+					progress.report({ increment: 25 });
+
+					const responseJson = response.data;
+
+					progress.report({ increment: 40 });
+
+
+					const choices = responseJson.choices;
+
+					const choice = choices[0];
+
+					progress.report({ increment: 60 });
+					
+					ans += choice.message.content;
+
+					// finish_reason
+					const finishReason = choice.finish_reason;
+
+					if (finishReason === "stop") {
+						break;
 					}
-				});
-				progress.report({ increment: 25 });
 
-				const responseJson = response.data;
+					responseOptions.messages.push({ "role": "assistant", "content": choice.text });
 
-				progress.report({ increment: 40 });
+					responseOptions.messages.push({ "role": "user", "content": "Please share the truncated text." });
 
-				const choices = responseJson.choices;
-
-				const choice = choices[0];
-				progress.report({ increment: 60 });
-				const textToReplace = choice.message.content;
-
-				progress.report({ increment: 80 });
-
-				// replace the range with the uppercase text in the active editor.
-
+					progress.report({ increment: 80 });
+				}while(true);
 				editor.edit(editBuilder => {
-					editBuilder.replace(selection, textToReplace);
+					editBuilder.replace(selection, ans);
 
 					progress.report({ increment: 100 });
 				});
