@@ -1,7 +1,8 @@
 {
-  "name": "test",
-  "displayName": "test",
-  "description": "test",
+  "name": "codeHelper",
+  "displayName": "Code Helper with Chat GPT",
+  "publisher": "codeHelperAAPNA",
+  "description": "codeHelper",
   "version": "0.0.1",
   "engines": {
     "vscode": "^1.78.0"
@@ -14,27 +15,27 @@
   "contributes": {
     "commands": [
       {
-        "command": "test.helloWorld",
+        "command": "codeHelper.helloWorld",
         "title": "Test Extension"
       },
       {
-        "command": "test.breakdownCode",
+        "command": "codeHelper.breakdownCode",
         "title": "Explain Code with AI"
       },
       {
-        "command": "test.refactorWithOpenAI",
+        "command": "codeHelper.refactorWithOpenAI",
         "title": "Refactor with AI"
       },
       {
-        "command": "test.writeTestCase",
+        "command": "codeHelper.writeTestCase",
         "title": "Write Test Case With AI" 
       },
       {
-        "command": "test.addCommentsToMethod",
+        "command": "codeHelper.addCommentsToMethod",
         "title": "Add Comments Endpoint" 
       },
       {
-        "command": "test.getAnsForComment",
+        "command": "codeHelper.getAnsForComment",
         "title": "Get Answer for Comment from AI"
       }
     ],
@@ -42,33 +43,33 @@
       "editor/context": [
         {
           "when": "editorFocus",
-          "command": "test.breakdownCode",
+          "command": "codeHelper.breakdownCode",
           "group": "AI Helper"
         },
         {
           "when": "editorFocus",
-          "command": "test.refactorWithOpenAI",
+          "command": "codeHelper.refactorWithOpenAI",
           "group": "AI Helper"
         },
         {
           "when": "editorFocus",
-          "command": "test.writeTestCase",
+          "command": "codeHelper.writeTestCase",
           "group": "AI Helper"
         },
         {
           "when": "editorFocus",
-          "command": "test.addCommentsToMethod",
+          "command": "codeHelper.addCommentsToMethod",
           "group": "AI Helper"
         },
         {
           "when": "editorFocus",
-          "command": "test.getAnsForComment",
+          "command": "codeHelper.getAnsForComment",
           "group": "AI Helper"
         }
       ],
       "scm/resourceFolder/context": [
         {
-          "command": "test.helloWorld",
+          "command": "codeHelper.helloWorld",
           "group": "AI Helper",
           "when": "resourceScheme == file"
         }
@@ -76,7 +77,7 @@
       
       "commandPalette": [
         {
-          "command": "test.helloWorld",
+          "command": "codeHelper.helloWorld",
           "group": "AI Helper"
         }
       ]
