@@ -3,7 +3,8 @@
   "displayName": "Code Helper with Chat GPT",
   "publisher": "codeHelperAAPNA",
   "description": "codeHelper",
-  "version": "0.0.2",
+  "version": "0.0.2", 
+  "icon": "icon.png",
   "repository": {
     "type": "git",
     "url": "https://github.com/Harikarthyk/Code-Helper-with-ChatGPT"
