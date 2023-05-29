@@ -3,7 +3,7 @@
   "displayName": "Code Helper with Chat GPT",
   "publisher": "codeHelperAAPNA",
   "description": "codeHelper",
-  "version": "0.0.3", 
+  "version": "0.0.4", 
   "icon": "icon.png",
   "repository": {
     "type": "git",
