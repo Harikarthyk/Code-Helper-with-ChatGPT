@@ -5,9 +5,39 @@ import * as vscode from 'vscode';
 
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
-export function activate(context: vscode.ExtensionContext) {
+export async function  activate(context: vscode.ExtensionContext) {
 
-	console.log('Congratulations, your extension "test" is now active!');
+	// when the app is installed ask user a prompt to enter the API key. and store that in the API Key.
+	// when the app is installed ask user a prompt to enter the API key. and store that in the API Key.
+	const apiKey = vscode.workspace.getConfiguration().get('codeHelper.apiKey');
+	let TOKEN: string = '';
+	if (!apiKey) {
+		vscode.window.showInformationMessage('Please enter your OpenAI API Key in the settings.json file. The extension will not work without the API Key.');
+
+		// get the API Key from the user.
+		const apiKey = await vscode.window.showInputBox({
+			placeHolder: "Enter your OpenAI API Key",
+			prompt: "Enter your OpenAI API Key",
+			validateInput: (text: string) => {
+				return text === '' ? 'Please enter your OpenAI API Key' : null;
+			}
+		});
+		// store the API Key in the settings.json file..
+		if (apiKey) {
+			
+			vscode.workspace.getConfiguration().update('codeHelper.apiKey', apiKey, true);
+			TOKEN = apiKey;
+		}
+		else {
+			vscode.window.showErrorMessage('Please enter your OpenAI API Key in the settings.json file. The extension will not work without the API Key.');
+
+		}
+	}else {
+		// @ts-ignore
+		TOKEN = apiKey;
+	}
+
+	
 
 	context.subscriptions.push(vscode.commands.registerCommand('codeHelper.helloWorld', () => {
 	}));
@@ -47,7 +77,7 @@ export function activate(context: vscode.ExtensionContext) {
 						const response: any = await axios.post('https://api.openai.com/v1/chat/completions', responseOptions, {
 							headers: {
 								'Content-Type': 'application/json',
-								Authorization: 'Bearer ' + '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'
+								Authorization: 'Bearer ' + TOKEN
 							}
 						});
 						progress.report({ increment: 25 });
@@ -119,7 +149,7 @@ export function activate(context: vscode.ExtensionContext) {
 					const response: any = await axios.post('https://api.openai.com/v1/chat/completions', responseOptions, {
 						headers: {
 							'Content-Type': 'application/json',
-							Authorization: 'Bearer ' + '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'
+							Authorization: 'Bearer ' + TOKEN
 						}
 					});
 					progress.report({ increment: 25 });
@@ -194,7 +224,7 @@ export function activate(context: vscode.ExtensionContext) {
 							headers: {
 								'Content-Type': 'application/json',
 								// eslint-disable-next-line @typescript-eslint/naming-convention
-								Authorization: 'Bearer ' + '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'
+								Authorization: 'Bearer ' + TOKEN
 							}
 						});
 						progress.report({ increment: 25 });
@@ -283,7 +313,7 @@ export function activate(context: vscode.ExtensionContext) {
 								headers: {
 									'Content-Type': 'application/json',
 									// eslint-disable-next-line @typescript-eslint/naming-convention
-									Authorization: 'Bearer ' + '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'
+									Authorization: 'Bearer ' + TOKEN
 								}
 							});
 							progress.report({ increment: 25 });
@@ -362,7 +392,7 @@ export function activate(context: vscode.ExtensionContext) {
 							headers: {
 								'Content-Type': 'application/json',
 								// eslint-disable-next-line @typescript-eslint/naming-convention
-								Authorization: 'Bearer ' + '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'
+								Authorization: 'Bearer ' + TOKEN
 							}
 						});
 						progress.report({ increment: 25 });
