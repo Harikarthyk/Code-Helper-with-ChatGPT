@@ -3,6 +3,7 @@
 import axios from 'axios';
 import * as vscode from 'vscode';
 
+// Axios call. 
 const triggerAPI = async (responseOptions: any, token: any) => {
 	return await axios.post('https://api.openai.com/v1/chat/completions', responseOptions, {
 		headers: {
@@ -14,6 +15,7 @@ const triggerAPI = async (responseOptions: any, token: any) => {
 	});
 };
 
+// Loader for the progress bar.
 const vscodeProgressIndicator = (progressLoaderTitle: string, cb: any, arg: any) => {
 	vscode.window.withProgress({
 		location: vscode.ProgressLocation.Notification,
@@ -22,6 +24,7 @@ const vscodeProgressIndicator = (progressLoaderTitle: string, cb: any, arg: any)
 	}, (progress, token) => cb(progress, token, arg.token, arg.prompt));
 };
 
+// Breakdown code.
 const breakDownCode = async (progress: any, token: any, bearerToken: any, prompt: any) => {
 	token.onCancellationRequested(() => {
 		console.log("User canceled the long running operation");
@@ -59,6 +62,7 @@ const breakDownCode = async (progress: any, token: any, bearerToken: any, prompt
 	progress.report({ increment: 100 });
 };
 
+// Write test case.
 const writeTestCase = async (progress: any, token: any, bearerToken: any, prompt: any) => {
 	token.onCancellationRequested(() => {
 		console.log("User canceled the long running operation");
@@ -97,6 +101,7 @@ const writeTestCase = async (progress: any, token: any, bearerToken: any, prompt
 	progress.report({ increment: 100 });
 };
 
+// Refactor code.
 const refactorCode = async (progress: any, token: any, bearerToken: any, prompt: any) => {
 	console.log("refactorCode", prompt, token, bearerToken, progress);
 	token.onCancellationRequested(() => {
@@ -184,7 +189,7 @@ const addCommentsToMethod = async (progress: any, token: any, bearerToken: any, 
 	});
 };
 
-
+// Add comments to the method.
 const getAnsForComment = async (progress: any, token: any, bearerToken: any, prompt: any) => {
 	token.onCancellationRequested(() => {
 		console.log("User canceled the long running operation");
