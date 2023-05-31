@@ -103,7 +103,6 @@ const writeTestCase = async (progress: any, token: any, bearerToken: any, prompt
 
 // Refactor code.
 const refactorCode = async (progress: any, token: any, bearerToken: any, prompt: any) => {
-	console.log("refactorCode", prompt, token, bearerToken, progress);
 	token.onCancellationRequested(() => {
 		console.log("User canceled the long running operation");
 	});
