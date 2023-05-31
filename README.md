@@ -31,8 +31,9 @@ To use the extension, follow these steps:
    - **Refactor Code**: This option refactors and optimizes the selected code, and adds comments to explain the code.
 
    - **Add Comments to Methods**: This option adds comments to methods in the code.
+5. Create your token from open ai (https://platform.openai.com/account/api-keys) and paste in the text box which appears.
 
-5. The result will be displayed in a new editor window or will replace the selected code in the active editor.
+6. The result will be displayed in a new editor window or will replace the selected code in the active editor.
 
 ## Requirements
 
