@@ -3,6 +3,8 @@
 import axios from 'axios';
 import * as vscode from 'vscode';
 
+const MODEL =  "gpt-3.5-turbo";
+
 // Axios call. 
 const triggerAPI = async (responseOptions: any, token: any) => {
 	return await axios.post('https://api.openai.com/v1/chat/completions', responseOptions, {
@@ -33,7 +35,7 @@ const breakDownCode = async (progress: any, token: any, bearerToken: any, prompt
 
 
 	const responseOptions: any = {
-		"model": "gpt-3.5-turbo",
+		"model": MODEL,
 		"messages": [{ "role": "user", "content": prompt }]
 	};
 
@@ -70,7 +72,7 @@ const writeTestCase = async (progress: any, token: any, bearerToken: any, prompt
 	progress.report({ increment: 0 });
 
 	const responseOptions: any = {
-		"model": "gpt-3.5-turbo",
+		"model": MODEL,
 		"messages": [{ "role": "user", "content": prompt }]
 	};
 
@@ -110,7 +112,7 @@ const refactorCode = async (progress: any, token: any, bearerToken: any, prompt:
 
 
 	const responseOptions: any = {
-		"model": "gpt-3.5-turbo",
+		"model": MODEL,
 		"messages": [{ "role": "user", "content": prompt }]
 	};
 
@@ -147,7 +149,7 @@ const addCommentsToMethod = async (progress: any, token: any, bearerToken: any, 
 
 
 	const responseOptions: any = {
-		"model": "gpt-3.5-turbo",
+		"model": MODEL,
 		"messages": [{ "role": "user", "content": prompt }],
 		"temperature": 1
 	};
@@ -196,7 +198,7 @@ const getAnsForComment = async (progress: any, token: any, bearerToken: any, pro
 	progress.report({ increment: 0 });
 
 	const responseOptions: any = {
-		"model": "gpt-3.5-turbo",
+		"model": MODEL,
 		"messages": [{ "role": "user", "content": prompt }]
 	};
 
