@@ -1,4 +1,4 @@
-# VS Code Code Helper Extension
+# Code Helper Extension for VS Code
 
 The VS Code Code Helper Extension provides helpful features to assist you with code-related tasks, such as explaining code, generating test cases, refactoring code, and adding comments to methods. It leverages the power of OpenAI's GPT-3.5 language model to provide intelligent suggestions and automate repetitive tasks.
 
