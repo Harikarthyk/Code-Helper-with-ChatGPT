@@ -236,11 +236,7 @@ const getAnsForComment = async (progress: any, token: any, bearerToken: any, pro
 	});
 };
 
-// This method is called when your extension is activated
-// Your extension is activated the very first time the command is executed
-export async function activate(context: vscode.ExtensionContext) {
-
-	// when the app is installed ask user a prompt to enter the API key. and store that in the API Key.
+const getApiFromUser = async () => {
 	const apiKey = vscode.workspace.getConfiguration().get('codeHelper.apiKey');
 	let token: string = '';
 	if (!apiKey) {
@@ -266,10 +262,23 @@ export async function activate(context: vscode.ExtensionContext) {
 		// @ts-ignore
 		token = apiKey;
 	}
+	return token;
+};
+
+// This method is called when your extension is activated
+// Your extension is activated the very first time the command is executed
+export async function activate(context: vscode.ExtensionContext) {
+
+	// when the app is installed ask user a prompt to enter the API key. and store that in the API Key.
+	getApiFromUser();
 
 	// Breakdown Code.
 	context.subscriptions.push(
-		vscode.commands.registerCommand('codeHelper.breakdownCode', (document, range) => {
+		vscode.commands.registerCommand('codeHelper.breakdownCode', async (document, range) => {
+			let token = await getApiFromUser();
+			if(!token) {
+				return;
+			}
 			// get the selected text from the active editor.
 			const editor = vscode.window.activeTextEditor;
 			if (editor) {
@@ -295,7 +304,11 @@ export async function activate(context: vscode.ExtensionContext) {
 
 	// Write Test Case.
 	context.subscriptions.push(
-		vscode.commands.registerCommand('codeHelper.writeTestCase', (document, range) => {
+		vscode.commands.registerCommand('codeHelper.writeTestCase', async (document, range) => {
+			let token = await getApiFromUser();
+			if(!token) {
+				return;
+			}
 			// get the selected text from the active editor.
 			const editor = vscode.window.activeTextEditor;
 			if (editor) {
@@ -322,7 +335,10 @@ export async function activate(context: vscode.ExtensionContext) {
 	// Refactor Code.
 	context.subscriptions.push(
 		vscode.commands.registerCommand('codeHelper.refactorWithOpenAI', async (document, range) => {
-
+			let token = await getApiFromUser();
+			if(!token) {
+				return;
+			}
 			// get the selected text from the active editor.
 			const editor = vscode.window.activeTextEditor;
 			if (editor) {
@@ -350,7 +366,10 @@ export async function activate(context: vscode.ExtensionContext) {
 	context.subscriptions.push(
 
 		vscode.commands.registerCommand('codeHelper.addCommentsToMethod', async (document, range) => {
-
+			let token = await getApiFromUser();
+			if(!token) {
+				return;
+			}
 			// get the selected text from the active editor.
 			const editor = vscode.window.activeTextEditor;
 			if (editor) {
@@ -392,6 +411,10 @@ export async function activate(context: vscode.ExtensionContext) {
 	context.subscriptions.push(
 
 		vscode.commands.registerCommand('codeHelper.getAnsForComment', async (document, range) => {
+			let token = await getApiFromUser();
+			if(!token) {
+				return;
+			}
 			// get the selected text from the active editor.
 			const editor = vscode.window.activeTextEditor;
 			if (editor) {

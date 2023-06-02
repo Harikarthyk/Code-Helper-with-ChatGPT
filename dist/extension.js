@@ -7881,7 +7881,6 @@ const writeTestCase = async (progress, token, bearerToken, prompt) => {
 };
 // Refactor code.
 const refactorCode = async (progress, token, bearerToken, prompt) => {
-    console.log("refactorCode", prompt, token, bearerToken, progress);
     token.onCancellationRequested(() => {
         console.log("User canceled the long running operation");
     });
@@ -7974,10 +7973,7 @@ const getAnsForComment = async (progress, token, bearerToken, prompt) => {
         progress.report({ increment: 100 });
     });
 };
-// This method is called when your extension is activated
-// Your extension is activated the very first time the command is executed
-async function activate(context) {
-    // when the app is installed ask user a prompt to enter the API key. and store that in the API Key.
+const getApiFromUser = async () => {
     const apiKey = vscode.workspace.getConfiguration().get('codeHelper.apiKey');
     let token = '';
     if (!apiKey) {
@@ -8003,8 +7999,19 @@ async function activate(context) {
         // @ts-ignore
         token = apiKey;
     }
+    return token;
+};
+// This method is called when your extension is activated
+// Your extension is activated the very first time the command is executed
+async function activate(context) {
+    // when the app is installed ask user a prompt to enter the API key. and store that in the API Key.
+    getApiFromUser();
     // Breakdown Code.
-    context.subscriptions.push(vscode.commands.registerCommand('codeHelper.breakdownCode', (document, range) => {
+    context.subscriptions.push(vscode.commands.registerCommand('codeHelper.breakdownCode', async (document, range) => {
+        let token = await getApiFromUser();
+        if (!token) {
+            return;
+        }
         // get the selected text from the active editor.
         const editor = vscode.window.activeTextEditor;
         if (editor) {
@@ -8022,7 +8029,11 @@ async function activate(context) {
         }
     }));
     // Write Test Case.
-    context.subscriptions.push(vscode.commands.registerCommand('codeHelper.writeTestCase', (document, range) => {
+    context.subscriptions.push(vscode.commands.registerCommand('codeHelper.writeTestCase', async (document, range) => {
+        let token = await getApiFromUser();
+        if (!token) {
+            return;
+        }
         // get the selected text from the active editor.
         const editor = vscode.window.activeTextEditor;
         if (editor) {
@@ -8041,6 +8052,10 @@ async function activate(context) {
     }));
     // Refactor Code.
     context.subscriptions.push(vscode.commands.registerCommand('codeHelper.refactorWithOpenAI', async (document, range) => {
+        let token = await getApiFromUser();
+        if (!token) {
+            return;
+        }
         // get the selected text from the active editor.
         const editor = vscode.window.activeTextEditor;
         if (editor) {
@@ -8058,6 +8073,10 @@ async function activate(context) {
     }));
     // Add Comments to the code.
     context.subscriptions.push(vscode.commands.registerCommand('codeHelper.addCommentsToMethod', async (document, range) => {
+        let token = await getApiFromUser();
+        if (!token) {
+            return;
+        }
         // get the selected text from the active editor.
         const editor = vscode.window.activeTextEditor;
         if (editor) {
@@ -8089,6 +8108,10 @@ async function activate(context) {
     }));
     // Get the answer for the comment.
     context.subscriptions.push(vscode.commands.registerCommand('codeHelper.getAnsForComment', async (document, range) => {
+        let token = await getApiFromUser();
+        if (!token) {
+            return;
+        }
         // get the selected text from the active editor.
         const editor = vscode.window.activeTextEditor;
         if (editor) {
