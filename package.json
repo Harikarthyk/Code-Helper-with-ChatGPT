@@ -20,28 +20,24 @@
   "contributes": {
     "commands": [
       {
-        "command": "codeHelper.helloWorld",
-        "title": "Test Extension"
-      },
-      {
         "command": "codeHelper.breakdownCode",
-        "title": "Explain Code with AI"
+        "title": "Code Helper: Explain the Code"
       },
       {
         "command": "codeHelper.refactorWithOpenAI",
-        "title": "Refactor with AI"
+        "title": "Code Helper: Refactor the Code"
       },
       {
         "command": "codeHelper.writeTestCase",
-        "title": "Write Test Case With AI" 
+        "title": "Code Helper: Write Test Cases" 
       },
       {
         "command": "codeHelper.addCommentsToMethod",
-        "title": "Add Comments Endpoint" 
+        "title": "Code Helper: Add Comments to Your Route Methods" 
       },
       {
         "command": "codeHelper.getAnsForComment",
-        "title": "Get Answer for Comment from AI"
+        "title": "Code Helper: Get Answers for your comments"
       }
     ],
     "menus": {
@@ -72,14 +68,6 @@
           "group": "AI Helper"
         }
       ],
-      "scm/resourceFolder/context": [
-        {
-          "command": "codeHelper.helloWorld",
-          "group": "AI Helper",
-          "when": "resourceScheme == file"
-        }
-      ],
-      
       "commandPalette": [
         {
           "command": "codeHelper.helloWorld",
