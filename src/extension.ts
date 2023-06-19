@@ -4,7 +4,7 @@ import axios from 'axios';
 import * as vscode from 'vscode';
 
 const MODEL =  "gpt-3.5-turbo";
-
+let USER_TOKEN: any = null;
 // Axios call. 
 const triggerAPI = async (responseOptions: any, token: any) => {
 	return await axios.post('https://api.openai.com/v1/chat/completions', responseOptions, {
@@ -14,6 +14,16 @@ const triggerAPI = async (responseOptions: any, token: any) => {
 			// eslint-disable-next-line @typescript-eslint/naming-convention
 			Authorization: `Bearer ${token}`
 		}
+	}).then(res => res).catch((error) => {
+		// if its un authorized show the error message.
+		if (error.response.status === 401) {
+			vscode.window.showErrorMessage('Please enter a valid API key.');
+		}
+		// if limit exceeded show the error message.
+		if (error.response.status === 402 || error.response.status === 429) {
+			vscode.window.showErrorMessage('You have exceeded the API limit. Please try again after some time.');
+		}
+		throw error;
 	});
 };
 
@@ -239,12 +249,14 @@ const getAnsForComment = async (progress: any, token: any, bearerToken: any, pro
 };
 
 const getApiFromUser = async () => {
-	const apiKey = vscode.workspace.getConfiguration().get('codeHelper.apiKey');
+	// create configuration.
+	const apiKey = vscode.workspace.getConfiguration().get('codeHelper.apiKey') || USER_TOKEN;
+
 	let token: string = '';
 	if (!apiKey) {
-		vscode.window.showInformationMessage('Please enter your OpenAI API Key. The extension will not work without the API Key.');
+		
 		// get the API Key from the user.
-		const apiKey = await vscode.window.showInputBox({
+		const _apiKey = await vscode.window.showInputBox({
 			placeHolder: "Enter your OpenAI API Key",
 			prompt: "Enter your OpenAI API Key",
 			validateInput: (text: string) => {
@@ -252,13 +264,15 @@ const getApiFromUser = async () => {
 			}
 		});
 		// store the API Key in the settings.json file..
-		if (apiKey) {
-			vscode.workspace.getConfiguration().update('codeHelper.apiKey', apiKey, true);
-			token = apiKey;
+		if (_apiKey) {
+			// create the settings.json file.
+			const settings = vscode.workspace.getConfiguration();
+			settings.update('codeHelper.apiKey', _apiKey, true);
+			token = _apiKey;
+			USER_TOKEN = _apiKey;
 		}
 		else {
-			vscode.window.showErrorMessage('Please enter your OpenAI API Key in the settings.json file. The extension will not work without the API Key.');
-
+			vscode.window.showErrorMessage('Please enter your OpenAI API Key');
 		}
 	} else {
 		// @ts-ignore
