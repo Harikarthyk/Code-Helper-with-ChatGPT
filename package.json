@@ -13,7 +13,9 @@
     "vscode": "^1.78.0"
   },
   "categories": [
-    "Other"
+    "Other",
+    "Snippets",
+    "Formatters"
   ],
   "activationEvents": [],
   "main": "./dist/extension.js",
@@ -38,6 +40,10 @@
       {
         "command": "codeHelper.getAnsForComment",
         "title": "Code Helper: Get Answers for your comments"
+      },
+      {
+        "command": "codeHelper.findBugs",
+        "title": "Code Helper: Find Bugs in your code"
       }
     ],
     "menus": {
@@ -66,14 +72,23 @@
           "when": "editorFocus",
           "command": "codeHelper.getAnsForComment",
           "group": "AI Helper"
-        }
-      ],
-      "commandPalette": [
+        },
         {
-          "command": "codeHelper.helloWorld",
+          "when": "editorFocus",
+          "command": "codeHelper.findBugs",
           "group": "AI Helper"
         }
       ]
+    },
+    "configuration": {
+      "title": "Code Helper",
+      "properties": {
+        "codeHelper.apiKey": {
+          "type": "string",
+          "default": "YOUR_API_KEY",
+          "description": "Your OpenAI API key"
+        }
+      }
     }
   },
   "scripts": {
