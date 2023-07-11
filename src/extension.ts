@@ -1,35 +1,50 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
 import axios from "axios";
+import { Configuration, OpenAIApi } from "openai";
 import * as vscode from "vscode";
 
 const MODEL = "gpt-3.5-turbo";
 let USER_TOKEN: any = null;
 // Axios call.
 const triggerAPI = async (responseOptions: any, token: any) => {
-  return await axios
-    .post("https://api.openai.com/v1/chat/completions", responseOptions, {
-      headers: {
-        // eslint-disable-next-line @typescript-eslint/naming-convention
-        "Content-Type": "application/json",
-        // eslint-disable-next-line @typescript-eslint/naming-convention
-        Authorization: `Bearer ${token}`,
-      },
-    })
-    .then((res) => res)
-    .catch((error) => {
-      // if its un authorized show the error message.
-      if (error.response.status === 401) {
-        vscode.window.showErrorMessage("Please enter a valid API key.");
-      }
-      // if limit exceeded show the error message.
-      if (error.response.status === 402 || error.response.status === 429) {
-        vscode.window.showErrorMessage(
-          "You have exceeded the API limit. Please try again after some time."
-        );
-      }
-      throw error;
-    });
+  
+  const configuration = new Configuration({
+    apiKey: token,
+  });
+  
+  const openai = new OpenAIApi(configuration);
+
+  try {
+    const chatCompletion = await openai.createChatCompletion(responseOptions);
+    return chatCompletion;
+  }catch(error){
+    console.log(error);
+    return;
+  }
+  // return await axios
+  //   .post("https://api.openai.com/v1/chat/completions", responseOptions, {
+  //     headers: {
+  //       // eslint-disable-next-line @typescript-eslint/naming-convention
+  //       "Content-Type": "application/json",
+  //       // eslint-disable-next-line @typescript-eslint/naming-convention
+  //       Authorization: `Bearer ${token}`,
+  //     },
+  //   })
+  //   .then((res) => res)
+  //   .catch((error) => {
+  //     // if its un authorized show the error message.
+  //     if (error.response.status === 401) {
+  //       vscode.window.showErrorMessage("Please enter a valid API key.");
+  //     }
+  //     // if limit exceeded show the error message.
+  //     if (error.response.status === 402 || error.response.status === 429) {
+  //       vscode.window.showErrorMessage(
+  //         "You have exceeded the API limit. Please try again after some time."
+  //       );
+  //     }
+  //     throw error;
+  //   });
 };
 
 // Loader for the progress bar.
@@ -74,7 +89,7 @@ const breakDownCode = async (
 
   const choice = choices[0];
 
-  const textToReplace = choice.message.content;
+  const textToReplace = choice?.message?.content || choice.text || '';
 
   progress.report({ increment: 80 });
 
@@ -115,7 +130,7 @@ const writeTestCase = async (
 
   const choice = choices[0];
 
-  const textToReplace = choice.message.content;
+  const textToReplace = choice?.message?.content || choice.text || '' ;
 
   progress.report({ increment: 80 });
 
@@ -159,7 +174,7 @@ const refactorCode = async (
 
   const choice = choices[0];
 
-  const textToReplace = choice.message.content;
+  const textToReplace = choice?.message?.content || choice.text || '';
 
   progress.report({ increment: 80 });
 
@@ -203,7 +218,7 @@ const addCommentsToMethod = async (
 
     const choice = choices[0];
 
-    ans += choice.message.content;
+    ans += choice?.message?.content || choice.text || '';
 
     // finish_reason
     const finishReason = choice.finish_reason;
@@ -212,7 +227,7 @@ const addCommentsToMethod = async (
       break;
     }
 
-    responseOptions.messages.push({ role: "assistant", content: choice.text });
+    responseOptions.messages.push({ role: "assistant", content: choice?.message?.content || choice.text || '' });
 
     responseOptions.messages.push({
       role: "user",
@@ -256,13 +271,13 @@ const getAnsForComment = async (
 
   const choice = choices[0];
 
-  let textToReplace = choice.message.content;
+  let textToReplace = choice?.message?.content || choice.text || '';
 
   // Need to get only the code from the response.
   textToReplace = textToReplace.split("```")[1];
 
   if (!textToReplace) {
-    textToReplace = choice.message.content;
+    textToReplace = choice?.message?.content || choice.text || '';
   }
 
   // Add prompt to the prefix to get textToReplace.
@@ -318,14 +333,14 @@ const findBugsInCode = async (
 
   const choice = choices[0];
 
-  let textToReplace = choice.message.content;
+  let textToReplace = choice?.message?.content || choice.text || '';
 
   // Need to get only the code from the response.
 
   textToReplace = textToReplace.split("```")[1];
 
   if (!textToReplace) {
-    textToReplace = choice.message.content;
+    textToReplace = choice?.message?.content || choice.text || '';
   }
 
   // Add prompt to the prefix to get textToReplace.
