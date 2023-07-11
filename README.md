@@ -51,6 +51,6 @@ If you encounter any issues, have suggestions, or want to contribute to the exte
 
 Your feedback and contributions are highly appreciated!
 
-## License
+<!-- ## License
 
-This extension is licensed under the [MIT License](https://opensource.org/licenses/MIT).
+This extension is licensed under the [MIT License](https://opensource.org/licenses/MIT). -->
