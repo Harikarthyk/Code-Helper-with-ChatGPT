@@ -487,7 +487,6 @@ export async function activate(context: vscode.ExtensionContext) {
       "codeHelper.refactorWithOpenAI",
       async (document, range) => {
         let token = await getApiFromUser();
-        console.info(token, "1");
         if (!token) {
           return;
         }
