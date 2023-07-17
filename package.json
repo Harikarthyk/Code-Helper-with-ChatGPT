@@ -60,7 +60,7 @@
       },
       {
         "command": "codeHelper.openChat",
-        "title": "Open Chat"
+        "title": "Code Helper: Chat with Code Helper GPT"
       }
     ],
     "menus": {
