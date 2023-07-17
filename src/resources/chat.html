@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+      /* Add your custom CSS styles here */
+      .chat-container {
+        height: 400px;
+        border: 1px solid #ccc;
+        overflow-y: scroll;
+        padding: 10px;
+      }
+
+      .message {
+        margin-bottom: 10px;
+      }
+
+      .message .sender {
+        font-weight: bold;
+      }
+
+      .message .text {
+        margin-top: 5px;
+      }
+
+      .input-container {
+        margin-top: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="chat-container">
+      <!-- Chat messages will be dynamically added here -->
+    </div>
+    <div class="input-container">
+      <input type="text" id="messageInput" placeholder="Type a message" />
+      <button id="sendButton">Send</button>
+    </div>
+
+    <script>
+      const chatContainer = document.querySelector('.chat-container');
+      const messageInput = document.querySelector('#messageInput');
+      const sendButton = document.querySelector('#sendButton');
+
+      // Send a message to the extension when the Send button is clicked
+      sendButton.addEventListener('click', () => {
+        const message = messageInput.value;
+        if (message) {
+          vscode.postMessage(message);
+          messageInput.value = '';
+        }
+      });
+
+      // Receive messages sent from the extension
+      window.addEventListener('message', (event) => {
+        const message = event.data;
+        addMessage('Extension', message);
+      });
+
+      // Add a new message to the chat UI
+      function addMessage(sender, text) {
+        const messageElement = document.createElement('div');
+        messageElement.classList.add('message');
+
+        const senderElement = document.createElement('div');
+        senderElement.classList.add('sender');
+        senderElement.textContent = sender;
+
+        const textElement = document.createElement('div');
+        textElement.classList.add('text');
+        textElement.textContent = text;
+
+        messageElement.appendChild(senderElement);
+        messageElement.appendChild(textElement);
+
+        chatContainer.appendChild(messageElement);
+        chatContainer.scrollTop = chatContainer.scrollHeight;
+      }
+    </script>
+  </body>
+</html>

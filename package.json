@@ -17,9 +17,22 @@
     "Snippets",
     "Formatters"
   ],
-  "activationEvents": [],
   "main": "./dist/extension.js",
+  "activationEvents": [
+    "onCommand:codeHelper.openChat"
+  ],
   "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "myExtensionView",
+          "title": "My Extension",
+          "icon": "./icon.png",
+          "command": "codeHelper.openChat",
+          "openCommand": "codeHelper.openChat"
+        }
+      ]
+    },
     "commands": [
       {
         "command": "codeHelper.breakdownCode",
@@ -44,6 +57,10 @@
       {
         "command": "codeHelper.findBugs",
         "title": "Code Helper: Find Bugs in your code"
+      },
+      {
+        "command": "codeHelper.openChat",
+        "title": "Open Chat"
       }
     ],
     "menus": {
@@ -76,6 +93,11 @@
         {
           "when": "editorFocus",
           "command": "codeHelper.findBugs",
+          "group": "AI Helper"
+        },
+        {
+          "when": "editorFocus",
+          "command": "codeHelper.openChat",
           "group": "AI Helper"
         }
       ]

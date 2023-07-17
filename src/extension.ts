@@ -4,6 +4,7 @@ import axios from "axios";
 import { Configuration, OpenAIApi } from "openai";
 import * as vscode from "vscode";
 
+import * as path from 'path';
 const MODEL = "gpt-3.5-turbo";
 let USER_TOKEN: any = null;
 // Axios call.
@@ -407,9 +408,372 @@ const getApiFromUser = async () => {
   return token;
 };
 
+function getWebviewContent(extensionPath: string, htmlFile: string): string {
+  let body: string = `<section class="msger">
+  <header class="msger-header">
+    <div class="msger-header-title">
+      <i class="fas fa-comment-alt"></i> 
+      Code Helper
+    </div>
+    <div class="msger-header-options">
+      <span><i class="fas fa-cog"></i></span>
+    </div>
+  </header>
+
+  <main class="msger-chat">
+    <div class="msg left-msg">
+      <div
+       class="msg-img"
+       style="background-image: url(https://image.flaticon.com/icons/svg/327/327779.svg)"
+      ></div>
+
+      <div class="msg-bubble">
+        <div class="msg-info">
+          <div class="msg-info-name">BOT</div>
+          <div class="msg-info-time">12:45</div>
+        </div>
+
+        <div class="msg-text">
+          Hi, welcome to Code Helper. How can I help you today?
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <form class="msger-inputarea">
+    <input type="text" class="msger-input" placeholder="Enter your message...">
+    <button type="submit" class="msger-send-btn">Send</button>
+  </form>
+</section>`;
+  let css = `:root {
+    --body-bg: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    --msger-bg: #fff;
+    --border: 2px solid #ddd;
+    --left-msg-bg: #ececec;
+    --right-msg-bg: #579ffb;
+  }
+  
+  html {
+    box-sizing: border-box;
+  }
+  
+  *,
+  *:before,
+  *:after {
+    margin: 0;
+    padding: 0;
+    box-sizing: inherit;
+  }
+  
+  body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-image: var(--body-bg);
+    font-family: Helvetica, sans-serif;
+  }
+  
+  .msger {
+    display: flex;
+    flex-flow: column wrap;
+    justify-content: space-between;
+    width: 100%;
+    max-width: 867px;
+    margin: 25px 10px;
+    height: calc(100% - 50px);
+    border: var(--border);
+    border-radius: 5px;
+    box-shadow: 0 15px 15px -5px rgba(0, 0, 0, 0.2);
+  }
+  
+  .msger-header {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px;
+    border-bottom: var(--border);
+    background: #eee;
+    color: #666;
+  }
+  
+  .msger-chat {
+    flex: 1;
+    overflow-y: auto;
+    padding: 10px;
+  }
+  .msger-chat::-webkit-scrollbar {
+    width: 6px;
+  }
+  .msger-chat::-webkit-scrollbar-track {
+    background: #ddd;
+  }
+  .msger-chat::-webkit-scrollbar-thumb {
+    background: #bdbdbd;
+  }
+  .msg {
+    display: flex;
+    align-items: flex-end;
+    margin-bottom: 10px;
+  }
+
+  pre {
+
+    -webkit-overflow-scrolling: touch;
+    overflow-x: auto;
+    width: 100%;
+    min-width: 100px;
+    padding: 0;
+    color: #000 !important;
+  }
+  code {
+    
+    color: #000 !important;
+  }
+  .msg-text {
+    width: 100%;
+  }
+  .msg:last-of-type {
+    margin: 0;
+  }
+  .msg-img {
+    display: none;
+    width: 50px;
+    height: 50px;
+    margin-right: 10px;
+    background: #ddd;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+    border-radius: 50%;
+  }
+  .msg-bubble {
+    max-width: 450px;
+    padding: 15px;
+    border-radius: 15px;
+    background: var(--left-msg-bg);
+  }
+  .msg-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  .msg-info-name {
+    margin-right: 10px;
+    font-weight: bold;
+  }
+  .msg-info-time {
+    font-size: 0.85em;
+  }
+  
+  .left-msg .msg-bubble {
+    border-bottom-left-radius: 0;
+    color: black;
+  }
+  
+  .right-msg {
+    flex-direction: row-reverse;
+  }
+  .right-msg .msg-bubble {
+    background: var(--right-msg-bg);
+    color: #fff;
+    border-bottom-right-radius: 0;
+  }
+  .right-msg .msg-img {
+    margin: 0 0 0 10px;
+  }
+  
+  .msger-inputarea {
+    display: flex;
+    padding: 10px;
+    border-top: var(--border);
+    background: #eee;
+  }
+  .msger-inputarea * {
+    padding: 10px;
+    border: none;
+    border-radius: 3px;
+    font-size: 1em;
+  }
+  .msger-input {
+    flex: 1;
+    background: #ddd;
+  }
+  .msger-send-btn {
+    margin-left: 10px;
+    background: rgb(0, 196, 65);
+    color: #fff;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.23s;
+  }
+  .msger-send-btn:hover {
+    background: rgb(0, 180, 50);
+  }
+  
+  .msger-chat {
+    background-color: #fcfcfe;
+  }
+  `;
+  const script = `
+  const msgerForm = document.querySelector(".msger-inputarea");
+  const msgerInput = document.querySelector(".msger-input");
+  const msgerChat = document.querySelector(".msger-chat");
+  
+  const BOT_MSGS = [
+    "Hi, how are you?",
+    "Ohh... I can't understand what you're trying to say. Sorry!",
+    "I like to play games... But I don't know how to play!",
+    "Sorry if my answers are not relevant. :))",
+    "I feel sleepy! :("
+  ];
+  
+  // Icons made by Freepik from www.flaticon.com
+  const BOT_IMG = "https://image.flaticon.com/icons/svg/327/327779.svg";
+  const PERSON_IMG = "https://image.flaticon.com/icons/svg/145/145867.svg";
+  const BOT_NAME = "BOT";
+  const PERSON_NAME = "You";
+  
+  msgerForm.addEventListener("submit", event => {
+    event.preventDefault();
+  
+    const msgText = msgerInput.value;
+    if (!msgText) return;
+  
+    appendMessage(PERSON_NAME, PERSON_IMG, "right", msgText);
+    msgerInput.value = "";
+    const messageChatBubbles = msgerChat.querySelectorAll(".msg");
+    const messages = [];
+    
+    messageChatBubbles.forEach((messageBubble) => {
+      const role = messageBubble.classList.contains("left-msg") ? "assistant" : "user";
+      const content = messageBubble.querySelector(".msg-text").innerText;
+      messages.push({role, content});
+    });
+
+    messages.push({role: "user", content: msgText});
+
+    botResponse(messages);
+  });
+  
+  function appendMessage(name, img, side, text) {
+    const msgHTML = \`
+      <div class="msg \${side}-msg">
+        <div class="msg-img" style="background-image: url(\${img})"></div>
+  
+        <div class="msg-bubble">
+          <div class="msg-info">
+            <div class="msg-info-name">\${name}</div>
+            <div class="msg-info-time">\${formatDate(new Date())}</div>
+          </div>
+  
+          <div class="msg-text">  
+            \${text}
+          </div>
+        </div>
+      </div>
+    \`;
+  
+    msgerChat.insertAdjacentHTML("beforeend", msgHTML);
+    msgerChat.scrollTop += 500;
+  }
+  
+  async function botResponse(messages) {
+    const response = await fetch("https://api.openai.com/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer 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",
+      },
+      body: JSON.stringify({
+        "model": "gpt-3.5-turbo",
+        "messages": messages || [{
+          "role": "system", 
+          "content": "You are a helpful assistant."}, 
+          {"role": "user", "content": "Hello!"}
+        ]
+      }),
+    }).then(response => response.json()).catch(error => console.error(error))
+    if(response?.choices?.length > 0) {
+      let content = response.choices[0]?.message?.content;
+
+      while(content?.includes("\`\`\`")) {
+        content = content.replace(/\`\`\`/g, '<pre><code>');
+        content = content.replace(/\`\`\`/g, '</code></pre>');
+      }
+      appendMessage(BOT_NAME, BOT_IMG, "left", content?.trim());
+    }
+    else {
+      appendMessage(BOT_NAME, BOT_IMG, "left", "something went wrong.");
+    }
+  }
+  
+  // Utils
+  function get(selector, root = document) {
+    return root.querySelector(selector);
+  }
+  
+  function formatDate(date) {
+    const h = "0" + date.getHours();
+    const m = "0" + date.getMinutes();
+  
+    return \`\${h.slice(-2)}:\${m.slice(-2)}\`;
+  }
+  
+  function random(min, max) {
+    return Math.floor(Math.random() * (max - min) + min);
+  }
+  `;  
+
+  let htmlCode = `
+    <!DOCTYPE html>
+    <html>
+      <head>
+        <link
+          rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css"
+        />
+        <style>
+          ${css}
+        </style>
+      </head>
+      <body>
+        ${body}
+      </body>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.5.3/ace.js"></script>
+      <script>
+        ${script}
+      </script>
+    </html>
+  `;
+  return htmlCode;
+}
+
+
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
-export async function activate(context: vscode.ExtensionContext) {
+export async function activate(context: vscode.ExtensionContext) {  
+  context.subscriptions.push(
+    vscode.commands.registerCommand('codeHelper.openChat', () => {
+      console.log('Opening chat UI');
+      
+
+      // Load the HTML content for the chat UI
+      const chatHtml = getWebviewContent(context.extensionPath, 'chat.html');
+      // open side bar with the chat UI
+      const panel = vscode.window.createWebviewPanel(
+        'codeHelperGPT', // Identifies the type of the webview. Used internally
+        'Code Helper GPT', // Title of the panel displayed to the user
+        vscode.ViewColumn.Beside, // Editor column to show the new webview panel in.
+        {
+          enableScripts: true,
+          retainContextWhenHidden: true,
+        } // Webview options. More on these later.
+      );
+      panel.webview.html = chatHtml;
+      
+    })
+  );
   // when the app is installed ask user a prompt to enter the API key. and store that in the API Key.
   getApiFromUser();
 
