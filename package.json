@@ -2,8 +2,8 @@
   "name": "codeHelper",
   "displayName": "Code Helper with Chat GPT",
   "publisher": "codeHelperAAPNA",
-  "description": "Ask questions about your code and get answers from the chat GPT model.",
-  "version": "1.1.0",
+  "description": "Ask questions about your code and get answers from the AI.",
+  "version": "2.0.0",
   "icon": "icon.png",
   "repository": {
     "type": "git",

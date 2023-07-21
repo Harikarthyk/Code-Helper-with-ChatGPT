@@ -18,10 +18,23 @@ const triggerAPI = async (responseOptions: any, token: any) => {
 
   try {
     const chatCompletion = await openai.createChatCompletion(responseOptions);
+    console.log(chatCompletion, 'chatCompletion')
     return chatCompletion;
   }catch(error){
     console.log(error);
-    return;
+    // show toast.
+
+    vscode.window.showErrorMessage(
+      "You have exceeded the API limit. Please try again after some time. or API key is invalid."
+    );
+
+    return {
+      data: {
+        choices: [
+        ]
+
+      },
+    }
   }
   // return await axios
   //   .post("https://api.openai.com/v1/chat/completions", responseOptions, {
@@ -83,7 +96,7 @@ const breakDownCode = async (
 
   progress.report({ increment: 26 });
   const response: any = await triggerAPI(responseOptions, bearerToken);
-
+  console.log(response, '112')
   const responseJson = response.data;
 
   const choices = responseJson.choices;
@@ -408,7 +421,7 @@ const getApiFromUser = async () => {
   return token;
 };
 
-function getWebviewContent(extensionPath: string, htmlFile: string): string {
+function getWebviewContent(token: string): string {
   let body: string = `<section class="msger">
   <header class="msger-header">
     <div class="msger-header-title">
@@ -677,13 +690,13 @@ function getWebviewContent(extensionPath: string, htmlFile: string): string {
     msgerChat.insertAdjacentHTML("beforeend", msgHTML);
     msgerChat.scrollTop += 500;
   }
-  
+
   async function botResponse(messages) {
     const response = await fetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: "Bearer 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",
+        Authorization: "Bearer ${token}",
       },
       body: JSON.stringify({
         "model": "gpt-3.5-turbo",
@@ -704,7 +717,7 @@ function getWebviewContent(extensionPath: string, htmlFile: string): string {
       appendMessage(BOT_NAME, BOT_IMG, "left", content?.trim());
     }
     else {
-      appendMessage(BOT_NAME, BOT_IMG, "left", "something went wrong.");
+      appendMessage(BOT_NAME, BOT_IMG, "left", JSON.stringify(response));
     }
   }
   
@@ -754,12 +767,13 @@ function getWebviewContent(extensionPath: string, htmlFile: string): string {
 // Your extension is activated the very first time the command is executed
 export async function activate(context: vscode.ExtensionContext) {  
   context.subscriptions.push(
-    vscode.commands.registerCommand('codeHelper.openChat', () => {
-      console.log('Opening chat UI');
-      
-
+    vscode.commands.registerCommand('codeHelper.openChat', async () => {
+      let token = await getApiFromUser();
+      if (!token) {
+        return;
+      }
       // Load the HTML content for the chat UI
-      const chatHtml = getWebviewContent(context.extensionPath, 'chat.html');
+      const chatHtml = getWebviewContent(token);
       // open side bar with the chat UI
       const panel = vscode.window.createWebviewPanel(
         'codeHelperGPT', // Identifies the type of the webview. Used internally
@@ -786,6 +800,7 @@ export async function activate(context: vscode.ExtensionContext) {
         if (!token) {
           return;
         }
+        console.log("Breakdown Code");
         // get the selected text from the active editor.
         const editor = vscode.window.activeTextEditor;
         if (editor) {
